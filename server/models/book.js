@@ -2,12 +2,6 @@
 //It will be imported by the database/sequelize file
 module.exports = (sequelize, type) => {
     return sequelize.define('book', {
-        id: {
-            type: type.INTEGER,
-            primaryKey: true,
-            allowNull: false,
-            field: 'id'
-        },
         name: {
             type: type.STRING,
             allowNull: false

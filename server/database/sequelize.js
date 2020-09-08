@@ -7,6 +7,7 @@ const BookModel = require('../models/book');
 const AdminModel = require('../models/admin');
 const BookAuthorModel = require('../models/book_author');
 const BookGenreModel = require('../models/book_genre');
+const TokenModel = require('../models/token');
 
 //Fetching Database Connection URI From Environment Variables
 const db_uri = process.env.DB_URI;
@@ -21,6 +22,7 @@ const Book = BookModel(sequelize, Sequelize);
 const Admin = AdminModel(sequelize, Sequelize);
 const BookAuthor = BookAuthorModel(sequelize, Sequelize);
 const BookGenre = BookGenreModel(sequelize, Sequelize);
+const Token = TokenModel(sequelize, Sequelize);
 
 (async() => {
 
@@ -31,9 +33,22 @@ const BookGenre = BookGenreModel(sequelize, Sequelize);
         await Book.belongsToMany(User, {through: 'UserBooks'});
         await User.belongsToMany(Book, {through: 'UserBooks'});
 
-        //Many to many association between booka and authors
+        //Many to many association between book and authors
         await Book.belongsToMany(BookAuthor, {through: 'AuthorBooks'});
         await BookAuthor.belongsToMany(Book, {through: 'AuthorBooks'});
+
+        //Many to many association between book and genre
+        await Book.belongsToMany(BookGenre, {through: 'BookGenres'});
+        await BookGenre.belongsToMany(Book, {through: 'BookGenres'});
+
+
+        //One to Many association between user and token
+        await User.hasMany(Token);
+        await Token.belongsTo(User);
+
+        //One to Many association between admin and token
+        await Admin.hasMany(Token);
+        Token.belongsTo(Admin);
 
         //Syncing Models with the database
         await sequelize.sync();
@@ -48,7 +63,7 @@ const BookGenre = BookGenreModel(sequelize, Sequelize);
     
 })();
 
-module.exports = {User, Book, Admin, BookAuthor, BookGenre} ;
+module.exports = {User, Book, Admin, BookAuthor, BookGenre, Token} ;
 
 
 
