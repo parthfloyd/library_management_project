@@ -2,11 +2,14 @@
 const express = require('express');
 const { Book, BookAuthor, BookGenre } =  require('../database/sequelize');
 const { Op } = require('sequelize');
+const Auth = require('../middleware/auth');
+const AdminCheck = require('../middleware/adminCheck');
+
 
 const router = new express.Router();
 
 //Create New book --> Expects book information in json and Returns book details on response. //=> Future versions. create books option, to add multiple books at once
-router.post('/book', async(req,res) => {
+router.post('/book', Auth, AdminCheck, async(req,res) => {
     try{
         //Fetching book data which contains book details, authorname and category
         const bookData = req.body;
@@ -176,7 +179,7 @@ router.get('/categories', async(req,res)=> {
 });
 
 //update book core details --> Most frequently used to update stock quantity, publication, etc.
-router.patch('/books',async(req,res) => {
+router.patch('/books',Auth, AdminCheck, async(req,res) => {
     try{
         await Book.update(req.body.user, {where: {
             id : req.body.id
@@ -189,7 +192,7 @@ router.patch('/books',async(req,res) => {
 });
 
 //update book author details --> To cover rare edge cases
-router.patch('/books/authors', async(req,res) => {
+router.patch('/books/authors', Auth, AdminCheck, async(req,res) => {
     try {
         //Fetching the book
         const book = await Book.findOne({where: {id: req.body.bookId}});
@@ -216,7 +219,7 @@ router.patch('/books/authors', async(req,res) => {
 });
 
 //update book categories --> To cover rare edge case
-router.patch('/books/category', async(req,res) => {
+router.patch('/books/category', Auth, AdminCheck, async(req,res) => {
     try{
         //Fetching the book
         const book = await Book.findOne({where: {id: req.body.bookId}});
@@ -248,7 +251,7 @@ router.patch('/books/category', async(req,res) => {
 })
 
 //Delete book using id
-router.delete('/books/:id', async(req, res) => {
+router.delete('/books/:id', Auth, AdminCheck, async(req, res) => {
     try{
         const book = await Book.findOne({where: {
             id: req.params.id

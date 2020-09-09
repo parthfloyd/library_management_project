@@ -4,6 +4,8 @@ const { User, Token, Admin } =  require('../database/sequelize');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
+const Auth = require('../middleware/auth');
+const AdminCheck = require('../middleware/adminCheck');
 const router = new express.Router();
 
 router.get('/', (req,res) => {
@@ -21,7 +23,7 @@ router.post('/registeruser', async (req,res) => {
         const password = await bcrypt.hash(userData.password, 8)
 
         //Generating token
-        const token_value = await jwt.sign({email: userData.email}, process.env.JWT_SECRET_USER);
+        const token_value = await jwt.sign({email: userData.email,role:"USER"}, process.env.JWT_SECRET_USER);
         const token = await Token.create({token_value});
         //creating user object with hashed password and adding to database
         const user = await User.create({
@@ -48,7 +50,7 @@ router.post('/loginuser', async(req, res) => {
             const isMatch = await bcrypt.compare(password, user.password);
             if(isMatch) {
                 //Generating token
-                const token_value = await jwt.sign({email: userData.email}, process.env.JWT_SECRET_USER);
+                const token_value = await jwt.sign({email: userData.email,role:"USER"}, process.env.JWT_SECRET_USER);
                 const token = await Token.create({token_value});
                 await user.addToken(token); //adding token to user
                 res.send({user,token});
@@ -66,10 +68,10 @@ router.post('/loginuser', async(req, res) => {
 });
 
 //LOGOUT User Route ---->
-router.post('/logoutuser', async(req,res) => {
+router.post('/logoutuser', Auth, async(req,res) => {
     try { 
-        const email = req.body.email;
-        const token_value = req.body.token_value;
+        const email = req.email;
+        const token_value = req.token;
 
         //Finding user
         const user = await User.findOne({where: {email: email}}); //finding user using email
@@ -81,7 +83,7 @@ router.post('/logoutuser', async(req,res) => {
                 res.send("User Logged out succesfully");
             }
         } else {
-            res.send(400).send("Sorry some error encountered!");
+            res.status(400).send("Sorry some error encountered!");
         }
     }
     catch(e) {
@@ -100,7 +102,7 @@ router.post('/registeradmin', async (req,res) => {
         const password = await bcrypt.hash(adminData.password, 8)
 
         //Generating token
-        const token_value = await jwt.sign({email: adminData.email}, process.env.JWT_SECRET_ADMIN);
+        const token_value = await jwt.sign({email: adminData.email,role:"ADMIN"}, process.env.JWT_SECRET_ADMIN);
         const token = await Token.create({token_value});
         console.log("token...." ,token);
         //creating user object with hashed password and adding to database
@@ -130,7 +132,7 @@ router.post('/loginadmin', async(req, res) => {
             const isMatch = await bcrypt.compare(password, admin.password);
             if(isMatch) {
                 //Generating token
-                const token_value = await jwt.sign({email: adminData.email}, process.env.JWT_SECRET_ADMIN);
+                const token_value = await jwt.sign({email: adminData.email,role:"ADMIN"}, process.env.JWT_SECRET_ADMIN);
                 const token = await Token.create({token_value});
                 await admin.addToken(token); //adding token to admin
                 res.send({admin,token});
@@ -148,10 +150,11 @@ router.post('/loginadmin', async(req, res) => {
 });
 
 //LOGOUT Admin Route ---->
-router.post('/logoutadmin', async(req,res) => {
+router.post('/logoutadmin', Auth, AdminCheck, async(req,res) => {
     try { 
-        const email = req.body.email;
-        const token_value = req.body.token_value;
+        
+        const email = req.email;
+        const token_value = req.token;
 
         //Finding user
         const admin = await Admin.findOne({where: {email: email}}); //finding user using email
