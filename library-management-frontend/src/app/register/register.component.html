@@ -1,0 +1,55 @@
+<h1 class="display-2 text-center mb-2">Register Now!</h1>
+<form class="container col-sm-12 col-md-8 col-lg-6" [formGroup]="registerForm" (ngSubmit) ="onSubmit()" ngNativeValidate>
+    <div class="form-group">
+        <label for="name">Name: </label>
+        <input 
+            type="text" 
+            placeholder="your name.." 
+            class=" form-control form-control-lg"
+            formControlName="name">
+    </div>
+    <div class="form-group">
+        <label for="email">E-mail Address: </label>
+        <input 
+            type="text" 
+            placeholder="name@example.com" 
+            class=" form-control form-control-lg"
+            formControlName="email">
+    </div>
+    <div class="form-group">
+        <label for="password">Password: </label>
+        <input type="password" formControlName="password" class=" form-control form-control-lg">
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="phone">Phone: </label>
+            <input type="number" formControlName="phone" class=" form-control form-control-lg">
+        </div>
+        <div class="form-group col-md-6" *ngIf= "registerForm.value.userType == 'USER'">
+            <label for="phone">Date of Birth: </label>
+            <input type="date" formControlName="date_of_birth" class=" form-control form-control-lg" required>
+        </div>
+    </div>
+    <div class="form-group" *ngIf= "registerForm.value.userType == 'USER'">
+        <label for="identification">Identification Image URL: </label>
+        <input type="text" formControlName="identity_proof_url" class=" form-control form-control-lg" required>
+    </div>
+    <div class="form-group">
+        <label for="">User Type: </label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input formControlName="userType" class="form-check-input" type="radio" id="userTypeUser" value="USER" checked>
+        <label class="form-check-label" for="User">
+          User
+        </label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input formControlName="userType" class="form-check-input" type="radio"  id="userTypeAdmin" value="ADMIN">
+        <label class="form-check-label" for="Admin">
+          Admin
+        </label>
+    </div>
+    <div class="form-group mx-auto mt-2 ">
+        <button type="submit" class="btn btn-primary btn-block" [ngClass] = "{'disabled': !registerForm.valid}" [disabled] = "!registerForm.valid"> Login</button>
+    </div>
+</form>
