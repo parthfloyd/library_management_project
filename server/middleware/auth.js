@@ -4,11 +4,13 @@ const {Admin,Token, User} = require('../database/sequelize');
 const Auth = async (req, res, next) => {
     try {
         const token_value = req.header('Authorization').replace('Bearer ','');
-
-        let decoded = await jwt.verify(token_value ,process.env.JWT_SECRET_ADMIN);
-        if(decoded == undefined){
+        let decoded = null;
+        try{
+            decoded = jwt.verify(token_value ,process.env.JWT_SECRET_ADMIN);
+        } catch (e){
             decoded = jwt.verify(token_value ,process.env.JWT_SECRET_USER);
         }
+        console.log("DECODED"+decoded.role);
         //AUTHENTICATION FOR ADMIN
         if(decoded.role == "ADMIN"){
             const admin = await Admin.findOne({where: {
@@ -50,6 +52,7 @@ const Auth = async (req, res, next) => {
                 if(await user.hasToken(token)){
                     req.token = token_value;
                     req.email = decoded.email;
+                    req.role = decoded.role;
                     next();
                 } else {
                     throw new Error();

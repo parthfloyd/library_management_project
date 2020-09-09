@@ -39,7 +39,7 @@ router.post('/registeruser', async (req,res) => {
 });
 
 //LOGIN USER ROUTE -->
-router.post('/loginuser', async(req, res) => {
+router.post('/loginuser',async(req, res) => {
     try {
         //Fetching user credentials
         const userData = req.body;
