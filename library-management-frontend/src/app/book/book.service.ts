@@ -49,6 +49,7 @@ export class BookService {
         return this.http.get<Book>(`${this.url}/books/details/${id}`, {responseType: 'json'})
         .pipe(
             map( data => {
+                console.log(data);
                 let authors = [];
                 let categories = [];
 

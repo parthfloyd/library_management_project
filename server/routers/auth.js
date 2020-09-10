@@ -1,11 +1,10 @@
 //This file contains user Routes
 const express = require('express');
-const { User, Token, Admin } =  require('../database/sequelize');
+const { User, Token} =  require('../database/sequelize');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const Auth = require('../middleware/auth');
-const AdminCheck = require('../middleware/adminCheck');
 const router = new express.Router();
 
 router.get('/', (req,res) => {
@@ -26,7 +25,7 @@ router.post('/register', async (req,res) => {
             ...data, //ES6 spread operator to add userData from response
             password  //overriding password from userData with the hashed password
         });
-        res.status(201).send({message: "Congratulations! Your Request has been submitted!"});
+        res.status(201).send({message: "Congratulations! Your Request has been submitted! Admin will approve your registration Soon!"});
     }
     catch (e) { //Todo  -> set custom error message for production
         res.status(400).send(e);

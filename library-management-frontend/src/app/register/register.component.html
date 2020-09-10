@@ -25,12 +25,12 @@
             <label for="phone">Phone: </label>
             <input type="number" formControlName="phone" class=" form-control form-control-lg">
         </div>
-        <div class="form-group col-md-6" *ngIf= "registerForm.value.userType == 'USER'">
+        <div class="form-group col-md-6">
             <label for="phone">Date of Birth: </label>
             <input type="date" formControlName="date_of_birth" class=" form-control form-control-lg" required>
         </div>
     </div>
-    <div class="form-group" *ngIf= "registerForm.value.userType == 'USER'">
+    <div class="form-group">
         <label for="identification">Identification Image URL: </label>
         <input type="text" formControlName="identity_proof_url" class=" form-control form-control-lg" required>
     </div>

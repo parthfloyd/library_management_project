@@ -117,6 +117,17 @@ router.get('/books/complete', async (req,res)=> {
     }
 });
 
+//Get One Book--> Basically sends back single book details
+router.get('/books/details/:id', async (req,res)=> {
+    try {
+        const book = await Book.findOne({where: {id: req.params.id}, include: [BookAuthor, BookGenre]});
+        res.send(book);
+    }
+    catch(e){
+        res.status(501).send();
+    }
+});
+
 //Get Books for a particular author --> Basically sends back book details
 router.get('/books/author/:author', async (req,res)=> {
     try{

@@ -29,80 +29,44 @@ export class AuthService {
 
   //LOGIN FUNCTION FOR USER AND ADMIN.
   login = async(credentials) => {
-    if(credentials.userType == "USER"){ //LOGGING IN FOR THE USER
-      this.http.post<ResponseDataUser>(`${this.url}/loginuser`,{
-        email: credentials.email,
-        password: credentials.password
-      },{
-        responseType: 'json'
-      }).subscribe( data => {
-        this.token = data.token.token_value;
-        this.user = data.user;
-        this.userType = credentials.userType;
-        this.userRoleChanged.next(this.userType);
-        this.router.navigate(['/books']);
-      },err => {
-        alert("Please check your credentials!");
-      });
-    }
-    else { //LOGGING IN FOR THE ADMIN
-      this.http.post<ResponseDataAdmin>(`${this.url}/loginadmin`,{
-        email: credentials.email,
-        password: credentials.password
-      },{
-        responseType: 'json'
-      }).subscribe( data => {
-        this.token = data.token.token_value;
-        this.admin = data.admin;
-        this.userType = credentials.userType;
-        this.userRoleChanged.next(this.userType);
-        this.router.navigate(['/books']);
-      },err => {
-        alert("Please check your credentials!");
-      });
-    }
-      
+    this.http.post<ResponseDataUser>(`${this.url}/login`,{
+      email: credentials.email,
+      password: credentials.password
+    },{
+      responseType: 'json'
+    }).subscribe( data => {
+      this.token = data.token.token_value;
+      this.user = data.user;
+      if(this.user.admin_flag){
+        this.userType = "ADMIN";
+      } else {
+        this.userType = "USER";
+      }
+      this.userRoleChanged.next(this.userType);
+      this.router.navigate(['/books']);
+    },err => {
+      alert("Please check your credentials!");
+    });
   }
     
   register = async(credentials) => {
-    if(credentials.userType == "USER"){ //Registering IN FOR THE USER
-      this.http.post<ResponseDataUser>(`${this.url}/registeruser`,{
-        name: credentials.name,
-        email: credentials.email,
-        phone: credentials.phone,
-        password: credentials.password,
-        identity_proof_url: credentials.identity_proof_url,
-        date_of_birth: credentials.date_of_birth
-      },{
-        responseType: 'json'
-      }).subscribe( data => {
-        this.token = data.token.token_value;
-        this.user = data.user;
-        this.userType = credentials.userType;
-        this.userRoleChanged.next(this.userType);
-        this.router.navigate(['/books']);
-      },err => {
-        alert("Please check your data!");
-      });
-    }
-    else { //Registering IN FOR THE ADMIN
-      this.http.post<ResponseDataAdmin>(`${this.url}/loginadmin`,{
-        name: credentials.name,
-        email: credentials.email,
-        password: credentials.password,
-        phone: credentials.phone
-      },{
-        responseType: 'json'
-      }).subscribe( data => {
-        this.token = data.token.token_value;
-        this.admin = data.admin;
-        this.userType = credentials.userType;
-        this.userRoleChanged.next(this.userType);
-        this.router.navigate(['/books']);
-      },err => {
-        alert("Please check your data!");
-      });
-    }
+    const adminFlag = credentials.userType === "ADMIN";
+    this.http.post<{message}>(`${this.url}/register`,{
+      name: credentials.name,
+      email: credentials.email,
+      phone: credentials.phone,
+      password: credentials.password,
+      identity_proof_url: credentials.identity_proof_url,
+      date_of_birth: credentials.date_of_birth,
+      admin_flag: adminFlag
+    },{
+      responseType: "json"
+    }).subscribe( message => {
+      alert(message.message);
+      this.router.navigate(['/books']);
+    },err => {
+      alert("Please check your data!");
+    });
 
   }
 

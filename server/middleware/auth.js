@@ -25,6 +25,7 @@ const Auth = async (req, res, next) => {
                 req.token = token_value;
                 req.email = decoded.email;
                 req.role = decoded.role;
+                console.log(req.role);
                 next();
             } else {
                 throw new Error();
