@@ -1,14 +1,11 @@
 <div class="row">
-        <h1 class="display-4 my-1">Books</h1>
+        <h1 class="display-4">Books</h1>
 </div>
 <div class="row">
-    <div class="col-md-4 col-lg-2 d-sm-none text-center border border-dark d-md-block p-1 ">
-        <h5>Category</h5>
+    <div class="col-md-4 col-lg-2 d-sm-none text-center border border-dark d-md-block p-2">
+        <h3>Category</h3>
         <ul class="list-group">
             <li class="list-group-item" *ngFor="let category of categories">{{category}}</li>
         </ul>
-    </div>
-    <div class="col ml-2 border border-dark">
-        <router-outlet></router-outlet>
     </div>
 </div>

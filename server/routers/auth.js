@@ -12,45 +12,47 @@ router.get('/', (req,res) => {
     res.send("Hello world User!")
 });
 
-//AUTHENTICATION ROUTES FOR USERS ================================================================>>>>
 
-//REGISTER User Route --> Accepts userData and returns created user data with token
-router.post('/registeruser', async (req,res) => {
+//REGISTER ROUTE ------>
+router.post('/register', async (req,res) => {
     try {
-        const userData = req.body; //Fetching user data from req
+        const data = req.body; //Fetching user data from req
         
         //Encrypting the password using bcrypt
-        const password = await bcrypt.hash(userData.password, 8)
+        const password = await bcrypt.hash(data.password, 8);
 
-        //Generating token
-        const token_value = await jwt.sign({email: userData.email,role:"USER"}, process.env.JWT_SECRET_USER);
-        const token = await Token.create({token_value});
         //creating user object with hashed password and adding to database
         const user = await User.create({
-            ...userData, //ES6 spread operator to add userData from response
+            ...data, //ES6 spread operator to add userData from response
             password  //overriding password from userData with the hashed password
         });
-        await user.addToken(token); //adding token to the user
-        res.status(201).send({user, token});
+        res.status(201).send({message: "Congratulations! Your Request has been submitted!"});
     }
     catch (e) { //Todo  -> set custom error message for production
         res.status(400).send(e);
     }
 });
 
-//LOGIN USER ROUTE -->
-router.post('/loginuser',async(req, res) => {
+//Login Route ---->>
+router.post('/login',async(req, res) => {
     try {
         //Fetching user credentials
-        const userData = req.body;
-        const email = userData.email;
-        const password = userData.password;
-        const user = await User.findOne({where: {email: email}});
+        const data = req.body;
+        const user = await User.findOne({where: {email: data.email}});
         if(user){
-            const isMatch = await bcrypt.compare(password, user.password);
+            const isMatch = await bcrypt.compare(data.password, user.password);
             if(isMatch) {
                 //Generating token
-                const token_value = await jwt.sign({email: userData.email,role:"USER"}, process.env.JWT_SECRET_USER);
+                let token_value;
+                if(!user.is_verified){
+                    return res.status(400).send("NOT VERIFIED");
+                }
+                else if(user.admin_flag){
+                    token_value = await jwt.sign({email: data.email,role:"ADMIN"}, process.env.JWT_SECRET_ADMIN);
+                }
+                else {
+                    token_value = await jwt.sign({email: data.email,role:"USER"}, process.env.JWT_SECRET_USER);
+                }
                 const token = await Token.create({token_value});
                 await user.addToken(token); //adding token to user
                 res.send({user,token});
@@ -60,26 +62,24 @@ router.post('/loginuser',async(req, res) => {
         } else {
             res.status(400).send("sorry user not found");
         }
-
     }
     catch (e) { //Todo  -> set custom error message for production
         res.status(400).send(e);
     }
 });
 
+//Logout Route --->
 //LOGOUT User Route ---->
-router.post('/logoutuser', Auth, async(req,res) => {
+router.post('/logout', Auth, async(req,res) => {
     try { 
-        const email = req.email;
-        const token_value = req.token;
-
         //Finding user
-        const user = await User.findOne({where: {email: email}}); //finding user using email
+        const user = await User.findOne({where: {email: req.email}}); //finding user using email
+        console.log()
         //finding token -- to enable cross check if someone tries to logout another user
-        const token = await Token.findOne({where: {token_value}});
+        const token = await Token.findOne({where: {token_value: req.token}});
         if(token){
             if(token.userId === user.id){
-                const tokens = await Token.destroy({where:{userId: user.id}});
+                await Token.destroy({where:{userId: user.id}});
                 res.send("User Logged out succesfully");
             }
         } else {
@@ -90,88 +90,4 @@ router.post('/logoutuser', Auth, async(req,res) => {
         res.status(400).send(e);
     }
 });
-
-//AUTHENTICATION ROUTES FOR ADMINS ================================================================>>>>
-
-//Register Admin Route --> Accepts adminData and returns created admin data with token
-router.post('/registeradmin', async (req,res) => {
-    try {
-        const adminData = req.body; //Fetching user data from req
-        
-        //Encrypting the password using bcrypt
-        const password = await bcrypt.hash(adminData.password, 8)
-
-        //Generating token
-        const token_value = await jwt.sign({email: adminData.email,role:"ADMIN"}, process.env.JWT_SECRET_ADMIN);
-        const token = await Token.create({token_value});
-        console.log("token...." ,token);
-        //creating user object with hashed password and adding to database
-        const admin = await Admin.create({
-            ...adminData, //ES6 spread operator to add userData from responses
-            password  //overriding password from userData with the hashed password
-        });
-        await admin.addToken(token); //adding token to the user
-
-        res.status(201).send({admin, token});
-    }
-    catch (e) {
-        res.status(400).send(e);
-    }
-})
-
-
-//LOGIN Admin ROUTE -->
-router.post('/loginadmin', async(req, res) => {
-    try {
-        //Fetching user credentials
-        const adminData = req.body;
-        const email = adminData.email;
-        const password = adminData.password;
-        const admin = await Admin.findOne({where: {email: email}});
-        if(admin){
-            const isMatch = await bcrypt.compare(password, admin.password);
-            if(isMatch) {
-                //Generating token
-                const token_value = await jwt.sign({email: adminData.email,role:"ADMIN"}, process.env.JWT_SECRET_ADMIN);
-                const token = await Token.create({token_value});
-                await admin.addToken(token); //adding token to admin
-                res.send({admin,token});
-            } else {
-                res.status(400).send("Sorry invalid credentials");
-            }
-        } else {
-            res.status(400).send("Sorry invalid credentials");
-        }
-
-    }
-    catch (e) { //Todo  -> set custom error message for production
-        res.status(400).send(e);
-    }
-});
-
-//LOGOUT Admin Route ---->
-router.post('/logoutadmin', Auth, AdminCheck, async(req,res) => {
-    try { 
-        
-        const email = req.email;
-        const token_value = req.token;
-
-        //Finding user
-        const admin = await Admin.findOne({where: {email: email}}); //finding user using email
-        //finding token -- to enable cross check if someone tries to logout another user
-        const token = await Token.findOne({where: {token_value}});
-        if(token){
-            if(token.adminId === admin.id){
-                const tokens = await Token.destroy({where:{adminId: admin.id}});
-                res.send("Admin Logged out succesfully");
-            }
-        } else {
-            res.send(400).send("Sorry some error encountered!");
-        }
-    }
-    catch(e) {
-        res.status(400).send(e);
-    }
-});
-
 module.exports = router;

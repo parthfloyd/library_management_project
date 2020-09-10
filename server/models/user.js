@@ -27,7 +27,17 @@ module.exports = (sequelize, type) => {
             allowNull: false
         },
         date_of_birth: {
-            type: type.DATEONLY
+            type: type.DATEONLY,
+            allowNull: false
+        },
+        admin_flag: {
+            type: type.BOOLEAN,
+            allowNull: true
+        },
+        is_verified: {
+            type: type.BOOLEAN,
+            allowNull: true,
+            defaultValue: false
         }
     })
 }
