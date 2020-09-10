@@ -7,13 +7,13 @@ import { BookService } from './book.service';
   styleUrls: ['./book.component.css']
 })
 export class BookComponent implements OnInit {
-  categories = [];
+  categories = null;
   constructor(private bookService : BookService) { }
 
   ngOnInit(): void {
-    this.bookService.getCategories().then((categories)=>{
+    this.bookService.getCategories().subscribe((categories)=>{
       this.categories = categories;
-    })
+    });
     
   }
 
