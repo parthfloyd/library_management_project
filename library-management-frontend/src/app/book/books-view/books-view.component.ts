@@ -8,12 +8,20 @@ import { BookService } from '../book.service';
 })
 export class BooksViewComponent implements OnInit {
   books = null;
+  page = 0;
   constructor(private bookService: BookService) { }
 
   ngOnInit(): void {
-    this.bookService.getBooksPaginated(0).subscribe((books)=> {
+    this.bookService.getBooksPaginated(this.page*12).subscribe((books)=> {
+      if(this.books === null){
+        this.books = books;
+        console.log(this.books);
+      }
+
+    });
+
+    this.bookService.bookDataSubject.subscribe((books) => {
       this.books = books;
-      console.log(this.books);
     })
   }
 

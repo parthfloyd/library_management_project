@@ -14,6 +14,10 @@ module.exports = (sequelize, type) => {
             type: type.INTEGER,
             allowNull: false
         },
+        cover_image_url: {
+            type: type.STRING,
+            allowNull: true
+        },
         publication: {
             type: type.STRING,
             allowNull: false

@@ -11,6 +11,9 @@ import { RegisterComponent } from './register/register.component';
 import { BookComponent } from './book/book.component';
 import { BooksViewComponent } from './book/books-view/books-view.component';
 import { BookDetailsComponent } from './book/book-details/book-details.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+
+import {ShortenPipe} from './shorten.pipe';
 
 @NgModule({
   declarations: [
@@ -21,6 +24,8 @@ import { BookDetailsComponent } from './book/book-details/book-details.component
     BookComponent,
     BooksViewComponent,
     BookDetailsComponent,
+    UserProfileComponent,
+    ShortenPipe
   ],
   imports: [
     BrowserModule,

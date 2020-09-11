@@ -1,11 +1,11 @@
 <div class="row" *ngIf="isBookLoaded">
-    <div class="col-lg-5 col-md-4 mx-auto">
+    <div class="col-lg-5 col-md-4 mt-4 mx-auto text-center">
         <div class="div my-2">
-            <img [src]="book.cover_image_url" alt="" class="img-thumbnail" height="400px">
+            <img [src]="book.cover_image_url" alt="" class="img-thumbnail shadow" height="400px">
         </div>
     </div>
-    <div class="col-lg-6 col-md-7 mx-auto mt-2">
-        <h2 class="text-center">Book Details</h2>
+    <div class="col-lg-6 col-md-7 mx-auto mt-4 shadow w-50" style="word-wrap: break-word">
+        <h2 class="text-center mt-3">Book Details</h2>
         <p><span class="h5">Name: </span> {{book.name}} </p>
         <p><span class="h5">Number of Pages: </span> {{book.pages}}</p>
         <p><span class="h5">Release Year: </span> {{book.release_year}}</p>
@@ -13,19 +13,30 @@
         <p><span class="h5">Available: </span> {{book.stock_quantity > 0 ? "YES" : "NO"}}</p>
         <p><span class="h5">Authors: </span> <span > {{book.Authors | slice:0}}</span></p>
         <p><span class="h5">Category: </span> <span > {{book.Categories | slice:0}}</span></p>
-        <button class="btn btn-block btn-primary">LOGIN TO BORROW</button>
+        <button *ngIf ="!userHasBook"  
+            class="btn btn-block btn-primary mb-3" 
+            (click)="issueBook(book.id)" 
+            [disabled] = "userType === 'NONE' || book.stock_quantity <= 0">
+            {{userType === "NONE" ? "LOGIN TO BORROW" : "Issue this book!"}}</button>
+        <button *ngIf= "userHasBook"
+            class="btn btn-block btn-success mb-3"
+            (click)="returnBook(book.id)"> {{ userHasBook ? "Return Book" : "Issue Book" }} </button>
+            
     </div>
 </div>
-<div class="row" *ngIf="isCategoryLoaded">
-    <div class="col-lg-12 d-flex flex-wrap">
+<div class="row mt-2 shadow mx-auto mb-5" 
+    *ngIf="isCategoryLoaded" 
+    style="overflow-y: scroll; height: 250px; white-space: nowrap;">
+    <h3 class="mt-2 ml-2">Similar Books</h3>
+    <div class="col-lg-12 d-flex flex-wrap" >
         <div 
             *ngFor = "let book1 of books"
-            class="card text-white bg-dark mb-3 mr-auto" 
+            class="card text-white bg-dark mb-3 mx-2 d-inline-block" 
             style="max-width: 12rem; cursor: pointer;"
-            [routerLink] = "['/books/details/'+book.id]"
+            [routerLink] = "['/books/details/'+book1.id]"
             >
-            <div class="card-body">
-                <h2 class="card-title">{{book1.name}}</h2>
+            <div class="card-body" style="white-space: pre-wrap; word-wrap: break-word;">
+                <h2 class="card-title">{{book1.name | shorten:20}}</h2>
                 <p class="card-text">{{book1.publication}}</p>
             </div>
         </div>

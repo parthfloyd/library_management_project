@@ -13,9 +13,10 @@ export class Book {
     public updatedAt: string;
     public Categories: Category[];
     public Authors: Author[];
+    public UserBooks: {bookId: number, createdAt: string}
 
     constructor(id: number, name: string, pages: number, release_year: number, publication: string, stock_quantity: number, cover_image_url: string,
-            createdAt: string, updatedAt: string, Categories: Category[], Authors: Author[] ){
+            createdAt: string, updatedAt: string, Categories: Category[], Authors: Author[] , UserBooks: {bookId: number, createdAt: string}){
                 this.id = id;
                 this.name = name;
                 this.pages = pages;
@@ -26,6 +27,7 @@ export class Book {
                 this.createdAt = createdAt;
                 this.updatedAt = updatedAt;
                 this.Categories = Categories;
-                this.Authors = Authors
+                this.Authors = Authors;
+                this.UserBooks = UserBooks;
     }
 }

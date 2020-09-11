@@ -5,6 +5,7 @@ import {Admin} from './models/admin.model';
 import {Token} from './models/token.model';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import {environment} from '../environments/environment';
 
 interface ResponseDataUser{
   user: User,
@@ -19,11 +20,12 @@ interface ResponseDataAdmin{
   providedIn: 'root'
 })
 export class AuthService {
-  url = 'http://localhost:3000'; //backend domain url
+  url = environment.apiURL; //backend domain url
   user: User = null;
   admin: Admin = null;
-  userType: string = null;
+  userType: string = "NONE";
   token:string = null;
+  headers = null;
   userRoleChanged : BehaviorSubject<string> = new BehaviorSubject("NONE");
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -36,6 +38,9 @@ export class AuthService {
       responseType: 'json'
     }).subscribe( data => {
       this.token = data.token.token_value;
+      //Adding headers for futher authenticated routes usage
+      this.headers = new HttpHeaders({
+        'Authorization': `Bearer ${this.token}`});
       this.user = data.user;
       if(this.user.admin_flag){
         this.userType = "ADMIN";
@@ -72,32 +77,15 @@ export class AuthService {
 
   logout = async() => {
       //Authentication token to the header
-      let headers = new HttpHeaders({
-        'Authorization': `Bearer ${this.token}`});
-
-      if(this.userType == "ADMIN"){
-        this.http.post(`${this.url}/logoutAdmin`,{},{
-          headers: headers,
-          responseType: 'text'
-        }).subscribe( ()=> {
-          this.token = null;
-          this.admin = null;
-          this.userType = "NONE";
-          this.userRoleChanged.next(this.userType);
-          this.router.navigate(['/login']);
-        });
-      } else if (this.userType == "USER") {
-        this.http.post(`${this.url}/logoutuser`,null,{
-          headers: headers,
-          responseType: 'text'
-        }).subscribe(()=> {
-          this.token = null;
-          this.user = null;
-          this.userType = "NONE";
-          this.userRoleChanged.next(this.userType);
-          this.router.navigate(['/login']);
-        });
-      }
-
+      this.http.post(`${this.url}/logout`,{},{
+        headers: this.headers,
+        responseType: 'text'
+      }).subscribe( ()=> {
+        this.token = null;
+        this.user = null;
+        this.userType = "NONE";
+        this.userRoleChanged.next(this.userType);
+        this.router.navigate(['/login']);
+      });
   }
 }

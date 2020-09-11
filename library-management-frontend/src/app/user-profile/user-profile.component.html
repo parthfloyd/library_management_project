@@ -1,0 +1,75 @@
+<div class="row" *ngIf="dataLoaded">
+    <h1 class="display-4 my-1">Welcome My Fellow Reader!</h1>
+</div>
+
+<div class="row" *ngIf="dataLoaded">
+    <!--LENDED BOOK SECTION-->
+    <div class="col-md-3 col-lg-3 d-sm-none text-center shadow d-md-block p-1"
+        style="overflow-y: scroll; white-space: nowrap; height: 600px;">
+        <h5>Issued Books </h5>
+        <div class="col-lg-12 d-flex flex-wrap" >
+            <div 
+                *ngFor = "let book of lendedBooks"
+                class="card text-white mb-3 mx-2 d-inline-block"
+                [ngClass]= "{'bg-danger': book.lateBook, 'bg-success': !book.lateBook}" 
+                style="max-width: 12rem; cursor: pointer;"
+                [routerLink] = "['/books/details/'+book.id]"
+                >
+                <div class="card-body" style="white-space: pre-wrap;">
+                    <h2 class="card-title">{{book.name}}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!---USER PROFILE SECTION
+     [formGroup]="loginForm" (ngSubmit) ="onSubmit()"
+    -->
+    <div class="col ml-3 shadow text-center">
+        <h4>YOUR DETAILS</h4>
+        <form [formGroup]="editProfileForm" (ngSubmit) ="onSubmit()">
+            <div class="form-group">
+                <label for="name">Name: </label>
+                <input 
+                    type="text" 
+                    class=" form-control form-control"
+                    formControlName="name"
+                    >
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail Address: </label>
+                <input 
+                    type="text" 
+                    placeholder="name@example.com" 
+                    class=" form-control form-control"
+                    formControlName="email"
+                    >
+            </div>
+            <div class="form-group">
+                <label for="confirm password">Confirm Password: </label>
+                <input type="password"class=" form-control form-control" formControlName="password">
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="phone">Phone: </label>
+                    <input type="number" formControlName="phone" [value] = "userData.phone" class=" form-control form-control-lg">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="phone">Date of Birth: </label>
+                    <input type="date" formControlName="date_of_birth" 
+                    [value] ="userData.date_of_birth" class=" form-control form-control-lg" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="identification">Identification Image URL: </label>
+                <input type="text" formControlName="identity_proof_url" 
+                [value]="userData.identity_proof_url" class=" form-control form-control-lg" required>
+            </div>
+            <div class="form-group mx-auto mt-2 ">
+                <button type="submit" class="btn btn-primary btn-block" [disabled] = "!editProfileForm.valid"> Request to Edit Details </button>
+            </div>
+        </form>
+        <div class="alert alert-info">
+            Disclaimer: If you edit Identification Image URL. You might have to wait for Admin`s approval!
+        </div>
+    </div>
+</div>

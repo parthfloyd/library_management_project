@@ -18,7 +18,8 @@ router.post('/book', Auth, AdminCheck, async(req,res) => {
             pages: bookData.pages,
             release_year: bookData.release_year,
             publication: bookData.publication,
-            stock_quantity: bookData.stock_quantity
+            stock_quantity: bookData.stock_quantity,
+            cover_image_url: bookData.cover_image_url
         }
         //Creating book
         const book = await Book.create(bookDetails);
@@ -131,10 +132,28 @@ router.get('/books/details/:id', async (req,res)=> {
 //Get Books for a particular author --> Basically sends back book details
 router.get('/books/author/:author', async (req,res)=> {
     try{
-        const authors = await BookAuthor.findOne({include: Book, where: {
-            name: req.params.author
+        const author = await BookAuthor.findOne({include: Book, where: {
+            name: {
+                [Op.substring]: req.params.author
+            }
         }});
-        res.send(authors.books);
+        res.send(author.books);
+    }
+    catch(e){
+        res.status(501).send();
+    }
+    
+});
+
+//Get Books for by name--> Basically sends back book details
+router.get('/books/name/:name', async (req,res)=> {
+    try{
+        const books = await Book.findAll({where: {
+            name: {
+                [Op.substring]: req.params.name
+            }
+        }});
+        res.send(books);
     }
     catch(e){
         res.status(501).send();
@@ -145,7 +164,9 @@ router.get('/books/author/:author', async (req,res)=> {
 //Get Books for a particular category --> Basically sends back book details
 router.get('/books/category/:category', async (req,res)=> {
     try {
-        const category = await BookGenre.findOne({include: Book, where: {category_name: req.params.category}}); //findAll({include: BookAuthor})  if you want to include author details
+        const category = await BookGenre.findOne({include: Book, where: {category_name: {
+            [Op.substring]: req.params.category
+        }}}); //findAll({include: BookAuthor})  if you want to include author details
         res.send(category.books);
     }
     catch(e){

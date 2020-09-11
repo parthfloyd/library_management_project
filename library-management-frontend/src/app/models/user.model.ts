@@ -1,3 +1,5 @@
+import { Book } from './book.model';
+
 export class User {
     public id: number;
     public name: string;
@@ -10,9 +12,10 @@ export class User {
     public createdAt: string;
     public updatedAt: string;
     public is_verified: boolean;
+    public books: Book[];
 
     constructor(id: number, name: string, email: string, phone: string, password: string, identity_proof_url: string, date_of_birth: string,
-            createdAt: string, updatedAt: string, admin_flag: boolean, is_verified: boolean) {
+            createdAt: string, updatedAt: string, admin_flag: boolean, is_verified: boolean, books: Book[]) {
                 this.id = id;
                 this.name = name;
                 this.email = email;
@@ -24,7 +27,7 @@ export class User {
                 this.updatedAt = updatedAt;
                 this.admin_flag = admin_flag;
                 this.is_verified = is_verified;
-
+                this.books = books;
             }
 }
 

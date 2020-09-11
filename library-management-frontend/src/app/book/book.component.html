@@ -1,14 +1,26 @@
 <div class="row">
-        <h1 class="display-4 my-1">Books</h1>
+    <div class="col-lg-12 d-inline-flex">
+        <span class="display-4 my-1 d-inline">Books</span>
+        <form [formGroup] = "searchForm" (ngSubmit) = "searchBooks()" class="form-inline ml-auto my-auto mr-0">
+            <input type="text" class="form-control d-inline ml-1" placeholder="Search Books.." formControlName="searchQuery">
+            <select class="custom-select ml-1" formControlName="searchBy">
+                <option selected value="bookName">By Book Name</option>
+                <option value="authorName">By Author</option>
+                <option value="categoryName">Category</option>
+              </select>
+            <button type="button" class="btn btn-secondary ml-1" (click)="loadAllBooks()">All books</button>
+        </form>
+    </div>
+        
 </div>
 <div class="row">
-    <div class="col-md-4 col-lg-2 d-sm-none text-center border border-dark d-md-block p-1 ">
+    <div class="col-md-4 col-lg-2 d-sm-none text-center shadow d-md-block p-1 ">
         <h5>Category</h5>
         <ul class="list-group">
             <li class="list-group-item" *ngFor="let category of categories">{{category}}</li>
         </ul>
     </div>
-    <div class="col ml-2 border border-dark">
+    <div class="col ml-3 shadow">
         <router-outlet></router-outlet>
     </div>
 </div>
