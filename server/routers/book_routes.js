@@ -210,10 +210,66 @@ router.get('/categories', async(req,res)=> {
     }
 });
 
-//update book core details --> Most frequently used to update stock quantity, publication, etc.
+//update book completely
 router.patch('/books',Auth, AdminCheck, async(req,res) => {
     try{
-        await Book.update(req.body.user, {where: {
+        const reqBook =req.body.book
+        //updating core details
+        const bookDataCore = {
+            name : reqBook.name,
+            pages: reqBook.pages,
+            release_year : reqBook.release_year,
+            publication: reqBook.publication,
+            stock_quantity: reqBook.stock_quantity,
+            cover_image_url: reqBook.cover_image_url
+        }
+        await Book.update(bookDataCore, {where: {
+            id : req.body.id
+        }});
+
+        //updating authors
+        const book = await Book.findOne({where: {id: req.body.id}});
+        await book.setAuthors([]);
+        //Adding book author details
+        for (author of reqBook.authors){
+            //Check if author doesnt exist already
+            const authorExists = await BookAuthor.findOne({where: {
+                name: author
+            }});
+            if(authorExists){
+                await book.addAuthor(authorExists);
+            } else {
+                const authorInstance = await BookAuthor.create({name: author});
+                await book.addAuthor(authorInstance);
+            }
+        }
+        //Adding book category details
+        await book.setCategories([]);
+        let level = 0
+        let category_under = null;
+        for (category of reqBook.category){
+            //First check if the category with same level exists
+            const categoryExists = await BookGenre.findOne({where: {category_name: category, category_level: level, category_under: category_under}});
+            if(categoryExists) {
+                await book.addCategory(categoryExists);
+            } else {
+                const categoryInstance = await BookGenre.create({category_name: category, category_level: level, category_under: category_under});
+                await book.addCategory(categoryInstance);   
+            }
+            category_under = category;
+            level += 1;
+        }
+
+        res.send("Book updated!");
+    }
+    catch(e){
+        res.status(501).send();
+    }
+});
+//update book core details --> Most frequently used to update stock quantity, publication, etc.
+router.patch('/books/core',Auth, AdminCheck, async(req,res) => {
+    try{
+        await Book.update(req.body, {where: {
             id : req.body.id
         }});
         res.send("Book updated!");

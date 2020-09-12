@@ -82,10 +82,10 @@ export class UserManagementComponent implements OnInit {
   } //todo send an email rejecting application
 
   //Return book of a user
-  returnBook(bookId, userId){
+  returnBook(bookId, userId, index){
     this.bookService.returnBookById(bookId,userId).subscribe((data: {message: string})=> {
       alert(data.message);
-      this.router.navigate(['./admin/dashboard/usermanagement/'+userId]);
+      this.router.navigate(['./admin/dashboard/usermanagement/0']);
     }, err=> {
       alert("Sorry some error encountered, please try again later!");
     })

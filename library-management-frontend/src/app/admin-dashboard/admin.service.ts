@@ -17,6 +17,11 @@ export class AdminService{
         return this.http.post(`${this.url}/book`,data,{headers: this.authService.headers ,responseType: 'json'});
     }
 
+    //update book
+    updateBook(data){
+        return this.http.patch(`${this.url}/books`,data,{headers: this.authService.headers ,responseType: 'text'});
+    }
+
     //Find Unverified User
     getUnverifiedUsers(){
         return this.http.get<User[]>(`${this.url}/users/unverified`,{headers: this.authService.headers, responseType: 'json'});

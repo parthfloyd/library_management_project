@@ -21,6 +21,10 @@
         <button *ngIf= "userHasBook && userType !=='ADMIN'"
             class="btn btn-block btn-success mb-3"
             (click)="returnBook(book.id)"> {{ userHasBook ? "Return Book" : "Issue Book" }} </button>
+        <button *ngIf= "userType ==='ADMIN'"
+            class="btn btn-block btn-warning mb-3"
+            [routerLink]="'/admin/dashboard/createbook/'+book.id"> Edit Book </button>
+        
             
     </div>
 </div>

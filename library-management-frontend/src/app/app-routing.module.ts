@@ -14,6 +14,7 @@ import { CreateBookComponent} from './admin-dashboard/create-book/create-book.co
 import { UserManagementComponent} from './admin-dashboard/user-management/user-management.component';
 import { UserManageResolverService} from './admin-dashboard/user-management/user-manage-resolver.service';
 import { UserManageDataResolverService} from './admin-dashboard/user-management/user-manage-data-resolver.service';
+import { EditBookResolverService} from './admin-dashboard/create-book/edit-book-resolver.service';
 
 const routes: Routes = [
   {path:'', redirectTo: '/books', pathMatch:'full'},
@@ -28,6 +29,7 @@ const routes: Routes = [
   {path:'admin/dashboard', component: AdminDashboardComponent, 
     children: [
       {path: 'createbook', component: CreateBookComponent},
+      {path: 'createbook/:id', component: CreateBookComponent, resolve: {book: EditBookResolverService}},
       {path: 'usermanagement/:id', component: UserManagementComponent, 
           resolve: 
             {

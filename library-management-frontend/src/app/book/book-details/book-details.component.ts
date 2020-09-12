@@ -31,12 +31,6 @@ export class BookDetailsComponent implements OnInit {
         }
         });
     
-    // if(this.userType !== "NONE"){
-    //     this.bookService.checkBookById(this.book.id).subscribe((data: {hasBook: boolean})=>{
-    //       this.userHasBook = data.hasBook;
-    //       console.log(this.userHasBook)
-    //     });
-    // }
     this.bookService.getBooksByCategory(this.book.Categories[0]).subscribe(books => {
       this.books = books;
       this.isCategoryLoaded=true;

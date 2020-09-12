@@ -1,6 +1,9 @@
 <div class="row">
     <span class="display-4">DASHBOARD</span>
-    <div class=" ml-auto my-auto">
+    <div class=" ml-auto my-auto d-inline-flex">
+        <form [formGroup] = "searchForm" (ngSubmit) = "searchBook()" class="form-inline ml-auto my-auto mr-2">
+            <input type="number" class="form-control d-inline ml-1" placeholder="Edit Book by id" formControlName="bookId">
+        </form>
         <button class="btn btn-light shadow" type="button" routerLink="/admin/dashboard/createbook">Create New Book</button>
         <button class="btn btn-light shadow" type="button" routerLink="/admin/dashboard/usermanagement/0">Manage Users</button>
     </div>
