@@ -33,13 +33,10 @@ router.get('/users/min', Auth, AdminCheck, async(req,res) => {
 })
 
 //Get USERS latest
-router.get('/users/latest', Auth, AdminCheck, async(req,res) => {
+router.get('/users/unverified', Auth, AdminCheck, async(req,res) => {
     try{
-        const weekAgoDate = new Date().setDate(new Date().getDate() - 7);
         const users = await User.findAll({attributes: ['id','name'], where: {
-            createdAt: {
-                [Op.gt]: weekAgoDate
-            }
+            is_verified: false
         }});
         res.send(users);
     }
@@ -49,7 +46,7 @@ router.get('/users/latest', Auth, AdminCheck, async(req,res) => {
     
 });
 
-//Get user complete data including books
+//Get user complete data including books using id
 router.get('/users/:id', Auth, async(req,res) => {
     try{
         let user;
@@ -81,6 +78,42 @@ router.get('/users/:id', Auth, async(req,res) => {
         res.status(501).send();
     }
 })
+
+//Get single user id by email
+router.get('/users/email/:email', Auth, AdminCheck, async(req,res) => {
+    try{
+        let user;
+        user = await User.findOne({
+            where: {
+                email: req.params.email
+            },
+            attributes: ['id']
+        });
+        res.send(user);
+    }
+    catch(e){
+        res.status(501).send();
+    }
+})
+
+// Get users by phone search query
+router.get('/users/phone/:phone', Auth, AdminCheck, async(req,res) => {
+    try{
+        let user;
+        user = await User.findOne({
+            where: {
+                phone: req.params.phone
+            },
+            attributes: ['id']
+        });
+        res.send(user);
+    }
+    catch(e){
+        res.status(501).send();
+    }
+})
+
+
 
 //Get user alert for less return days for book -> returns empty list if none
 router.get('/users/:id/bookalert', Auth, async(req,res) => {
@@ -195,7 +228,7 @@ router.post('/users/:id', Auth, async(req,res) => {
     try{
         //Fetching book and user
         const user = await User.findOne({where: {
-            id: req.params.id
+            email: req.email
         }});
         const book = await Book.findOne({
             where: {
@@ -246,10 +279,19 @@ router.get('/users/:userid/hasbook/:bookid', Auth, async(req,res) => {
 //Return a lent book
 router.get('/users/:userid/returnbook/:bookid', Auth, async( req, res) => {
     try{
-        //Fetching book and user
-        const user = await User.findOne({where: {
-            id: req.params.userid
-        }});
+        let user;
+        if(req.role ==="ADMIN"){
+            //Fetching book and user
+            user = await User.findOne({where: {
+                id: req.params.userid
+            }});
+            
+        } else{
+            //fetching user
+            user = await User.findOne({where: {
+                email: req.email
+            }})
+        }
         const book = await Book.findOne({
             where: {
                 id: req.params.bookid

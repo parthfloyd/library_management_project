@@ -1,6 +1,5 @@
 import { Component, OnInit} from '@angular/core';
-import { ActivatedRoute, UrlSegment } from '@angular/router';
-import { map } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 import { BookService } from '../book.service';
 import { Book } from 'src/app/models/book.model';
 import { AuthService } from 'src/app/auth.service';

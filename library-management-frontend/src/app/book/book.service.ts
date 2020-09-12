@@ -104,7 +104,7 @@ export class BookService {
     }
 
     //return book by id
-    returnBookById(id){
-        return this.http.get(`${this.url}/users/${this.authService.user.id}/returnbook/${id}`,{headers: this.authService.headers, responseType: 'json'});
+    returnBookById(bookId,userId=this.authService.user.id){
+        return this.http.get(`${this.url}/users/${userId}/returnbook/${bookId}`,{headers: this.authService.headers, responseType: 'json'});
     }
 }

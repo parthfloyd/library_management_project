@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import {environment} from '../../environments/environment';
 import {AuthService} from '../auth.service';
+import { User } from '../models/user.model';
 @Injectable({
     providedIn: 'root'
 })
@@ -11,10 +12,10 @@ export class UserDataService {
     constructor(private authService: AuthService, private http: HttpClient){}
 
     completeUserData(id) {
-        return this.http.get(`${this.url}/users/${id}`,{headers: this.authService.headers, responseType: 'json'});
+        return this.http.get<User>(`${this.url}/users/${id}`,{headers: this.authService.headers, responseType: 'json'});
     }
 
-    updateUserData(data){
-        return this.http.patch(`${this.url}/users/${this.authService.user.id}`,data,{headers: this.authService.headers, responseType:'json'});
+    updateUserData(data,userId = this.authService.user.id){
+        return this.http.patch(`${this.url}/users/${+userId}`,data,{headers: this.authService.headers, responseType:'json'});
     }
 }

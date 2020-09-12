@@ -13,12 +13,12 @@
         <p><span class="h5">Available: </span> {{book.stock_quantity > 0 ? "YES" : "NO"}}</p>
         <p><span class="h5">Authors: </span> <span > {{book.Authors | slice:0}}</span></p>
         <p><span class="h5">Category: </span> <span > {{book.Categories | slice:0}}</span></p>
-        <button *ngIf ="!userHasBook"  
+        <button *ngIf ="!userHasBook && userType!=='ADMIN'"  
             class="btn btn-block btn-primary mb-3" 
             (click)="issueBook(book.id)" 
             [disabled] = "userType === 'NONE' || book.stock_quantity <= 0">
             {{userType === "NONE" ? "LOGIN TO BORROW" : "Issue this book!"}}</button>
-        <button *ngIf= "userHasBook"
+        <button *ngIf= "userHasBook && userType !=='ADMIN'"
             class="btn btn-block btn-success mb-3"
             (click)="returnBook(book.id)"> {{ userHasBook ? "Return Book" : "Issue Book" }} </button>
             

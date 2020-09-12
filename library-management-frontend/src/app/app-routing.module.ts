@@ -9,6 +9,11 @@ import { BookDetailsResolverService } from './book/book-details/book-details-res
 import { BookDetailsResolverUserService } from './book/book-details/book-details-resolver-user.service';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { UserDataResolverService} from './user-profile/user-data-resolver.service';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { CreateBookComponent} from './admin-dashboard/create-book/create-book.component';
+import { UserManagementComponent} from './admin-dashboard/user-management/user-management.component';
+import { UserManageResolverService} from './admin-dashboard/user-management/user-manage-resolver.service';
+import { UserManageDataResolverService} from './admin-dashboard/user-management/user-manage-data-resolver.service';
 
 const routes: Routes = [
   {path:'', redirectTo: '/books', pathMatch:'full'},
@@ -19,7 +24,18 @@ const routes: Routes = [
       {path: '', component: BooksViewComponent},
       {path: 'details/:id', component: BookDetailsComponent, resolve: {book: BookDetailsResolverService, hasBook: BookDetailsResolverUserService}}
     ]},
-  {path:'user', component: UserProfileComponent, resolve: {userData: UserDataResolverService}}
+  {path:'user', component: UserProfileComponent, resolve: {userData: UserDataResolverService}},
+  {path:'admin/dashboard', component: AdminDashboardComponent, 
+    children: [
+      {path: 'createbook', component: CreateBookComponent},
+      {path: 'usermanagement/:id', component: UserManagementComponent, 
+          resolve: 
+            {
+              unverifiedUsers: UserManageResolverService, 
+              userData: UserManageDataResolverService
+            }
+      }
+    ]}
 ];
 
 @NgModule({

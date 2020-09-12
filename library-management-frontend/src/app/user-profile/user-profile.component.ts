@@ -26,24 +26,27 @@ export class UserProfileComponent implements OnInit {
     //Fetching user data
     this.activatedRoute.data.subscribe((data: {userData: User})=> {
       this.userData = data.userData;
-      for(let book of data.userData.books){
-        let completeBookData;
-        if (+book.UserBooks.createdAt <= this.lateBookDate){
-          completeBookData = {
-            ...book,
-            lateBook: true
+      if(data.userData.books.length>0){
+        for(let book of data.userData.books){
+          let completeBookData;
+          if (+book.UserBooks.createdAt <= this.lateBookDate){
+            completeBookData = {
+              ...book,
+              lateBook: true
+            }
+          } else {
+            completeBookData = {
+              ...book,
+              lateBook:false
+            }
           }
-        } else {
-          completeBookData = {
-            ...book,
-            lateBook:false
-          }
+          this.lendedBooks.push(completeBookData);
         }
-        this.lendedBooks.push(completeBookData);
+        console.log(this.lendedBooks);
+        console.log(this.lendedBooks[0].UserBooks.createdAt);
+        console.log(this.userData);
       }
-      console.log(this.lendedBooks);
-      console.log(this.lendedBooks[0].UserBooks.createdAt);
-      console.log(this.userData);
+      
       this.dataLoaded = true;
     });
 

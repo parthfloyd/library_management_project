@@ -14,6 +14,9 @@ import { BookDetailsComponent } from './book/book-details/book-details.component
 import { UserProfileComponent } from './user-profile/user-profile.component';
 
 import {ShortenPipe} from './shorten.pipe';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { CreateBookComponent } from './admin-dashboard/create-book/create-book.component';
+import { UserManagementComponent } from './admin-dashboard/user-management/user-management.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +28,10 @@ import {ShortenPipe} from './shorten.pipe';
     BooksViewComponent,
     BookDetailsComponent,
     UserProfileComponent,
-    ShortenPipe
+    ShortenPipe,
+    AdminDashboardComponent,
+    CreateBookComponent,
+    UserManagementComponent
   ],
   imports: [
     BrowserModule,

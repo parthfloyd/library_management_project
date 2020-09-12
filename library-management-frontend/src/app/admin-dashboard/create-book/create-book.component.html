@@ -1,0 +1,62 @@
+<div class="container shadow-lg p-3">
+    <div class="row">
+        <h3 class="mx-auto">CREATE BOOK!</h3>
+    </div>
+        <br>
+    <div class="container col-sm-12 col-md-8 col-lg-6 mx-auto">
+        <form  [formGroup]="createBookForm" (ngSubmit) ="onSubmit()" class="form mx-auto">
+            
+            <div class="form-group">
+                <label for="name">Name: </label>
+                <input type="text" formControlName="name" class=" form-control ">
+            </div>
+            <div class="form-group">
+                <label for="pages">Pages: </label>
+                <input type="number" formControlName="pages" class=" form-control ">
+            </div>
+            <div class="form-group">
+                <label for="release year">Release Year: </label>
+                <input type="number" formControlName="release_year" class=" form-control ">
+            </div>
+            <div class="form-group">
+                <label for="publication">Publication</label>
+                <input type="text" formControlName="publication" class=" form-control ">
+            </div>
+            <div class="form-group">
+                <label for="Stock Quantity ">Stock Quantity </label>
+                <input type="number" formControlName="stock_quantity" class=" form-control ">
+            </div>
+            <div class="form-group">
+                <label for="Cover Image Url ">Cover Image Url</label>
+                <input type="text" formControlName="cover_image_url" class=" form-control ">
+            </div>
+            <div class="form-group">
+                Authors:
+                <div formArrayName="authors">
+                    <div *ngFor="let author of authorControls ; let i=index">
+                      <div [formGroupName]="i" class="form-inline">
+                        <input type="text" formControlName="author" class="form-control my-1" placeholder="Author Name">
+                        <button (click)="deleteAuthor(i)" type="button" class="btn btn-danger btn-sm mr-1 ml-2">Remove Author</button>
+                      </div>
+                    </div>
+                    <button type="button" (click)="addNewAuthor()" class="btn btn-success btn">Add More Authors</button>
+                  </div>
+            </div>
+            <div class="form-group">
+                Categories:
+                <div formArrayName="categories">
+                    <div *ngFor="let category of categoryControls ; let i=index">
+                      <div [formGroupName]="i" class="form-inline ml">
+                        <input type="text" formControlName="category" class="form-control my-1" placeholder="Category Name">
+                        <button (click)="deleteCategory(i)" type="button" class="btn btn-danger btn-sm ml-2">Remove Category</button>
+                      </div>
+                    </div>
+                    <button type="button" (click)="addNewCategory()" class="btn btn-success btn">Add More Categories</button>
+                  </div>
+            </div>
+            <div class="form-group mx-auto mt-2 ">
+                <button type="submit" class="btn btn-primary btn-block" [ngClass] = "{'disabled': !createBookForm.valid}" [disabled] = "!createBookForm.valid"> Create Book </button>
+            </div>
+        </form>
+    </div>
+</div>
